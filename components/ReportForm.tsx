@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { 
-  ChevronRight, ChevronLeft, Send, User, MapPin, Calendar, 
-  FileText, AlertCircle, Eye, EyeOff, Camera, 
+import {
+  ChevronRight, ChevronLeft, Send, User, MapPin, Calendar,
+  FileText, AlertCircle, Eye, EyeOff, Camera,
   Paperclip, Shield, CheckCircle, Clock, UserX, UserCheck, Smartphone, Mail, Hash
 } from 'lucide-react';
 import { ViolenceType, ReporterType, Report } from '../types';
@@ -35,22 +35,22 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit }) => {
 
   const [formData, setFormData] = useState({
     informant: { name: '', dni: '', email: '', phone: '', type: ReporterType.VICTIMA },
-    involved: { 
-      victimName: '', 
-      victimAge: '', 
-      victimGender: 'No especificat' as any, 
-      victimCategory: '', 
-      accusedName: '', 
-      accusedRelation: '' 
+    involved: {
+      victimName: '',
+      victimAge: '',
+      victimGender: 'No especificat' as any,
+      victimCategory: '',
+      accusedName: '',
+      accusedRelation: ''
     },
-    facts: { 
-      date: new Date().toISOString().split('T')[0], 
-      time: '', 
-      location: '', 
-      violenceTypes: [] as ViolenceType[], 
-      description: '', 
-      witnesses: '', 
-      isRecurring: false 
+    facts: {
+      date: new Date().toISOString().split('T')[0],
+      time: '',
+      location: '',
+      violenceTypes: [] as ViolenceType[],
+      description: '',
+      witnesses: '',
+      isRecurring: false
     }
   });
 
@@ -65,19 +65,19 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit }) => {
   const isStepValid = () => {
     if (step === 1) {
       if (isAnonymous) return true;
-      return formData.informant.name.length > 2 && 
-             formData.informant.email.includes('@') && 
-             formData.informant.phone.length >= 9;
+      return formData.informant.name.length > 2 &&
+        formData.informant.email.includes('@') &&
+        formData.informant.phone.length >= 9;
     }
     if (step === 2) {
-      return formData.involved.victimName.length > 2 && 
-             formData.involved.victimCategory !== '' && 
-             formData.involved.victimAge !== '';
+      return formData.involved.victimName.length > 2 &&
+        formData.involved.victimCategory !== '' &&
+        formData.involved.victimAge !== '';
     }
     if (step === 3) {
-      return formData.facts.description.trim().length > 5 && 
-             formData.facts.location !== '' && 
-             formData.facts.violenceTypes.length > 0;
+      return formData.facts.description.trim().length > 5 &&
+        formData.facts.location !== '' &&
+        formData.facts.violenceTypes.length > 0;
     }
     if (step === 5) return gdprAccepted;
     return true;
@@ -86,7 +86,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit }) => {
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-100">
       <div className="bg-slate-900 p-8 text-white flex items-center gap-4">
-        <div className="bg-amber-500 p-3 rounded-2xl shadow-lg"><Shield className="w-8 h-8" /></div>
+        <div className="h-16 w-16 flex items-center justify-center overflow-hidden">
+          <img
+            src="https://github.com/handbolmolins/URLimagenes/blob/main/MOLINS%20COLOR.png?raw=true"
+            alt="Escut Handbol Molins"
+            className="h-full w-full object-contain"
+          />
+        </div>
         <div>
           <h3 className="text-2xl font-black">Comunicació d'Incidents</h3>
           <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Protocol LOPIVI · Club Handbol Molins</p>
@@ -111,11 +117,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit }) => {
             <h4 className="text-2xl font-black text-slate-900">1. Identificació de l'informant</h4>
             <div className="grid md:grid-cols-2 gap-4">
               <button onClick={() => setIsAnonymous(false)} className={`p-6 rounded-3xl border-2 transition-all text-left flex items-start gap-4 ${!isAnonymous ? 'border-amber-500 bg-amber-50' : 'border-slate-100 hover:border-slate-200'}`}>
-                <UserCheck className="w-6 h-6 text-amber-500" /> 
+                <UserCheck className="w-6 h-6 text-amber-500" />
                 <div><p className="font-bold">Identificada</p><p className="text-xs text-slate-500">Permet un seguiment directe i protecció jurídica.</p></div>
               </button>
               <button onClick={() => setIsAnonymous(true)} className={`p-6 rounded-3xl border-2 transition-all text-left flex items-start gap-4 ${isAnonymous ? 'border-slate-900 bg-slate-50' : 'border-slate-100 hover:border-slate-200'}`}>
-                <EyeOff className="w-6 h-6 text-slate-900" /> 
+                <EyeOff className="w-6 h-6 text-slate-900" />
                 <div><p className="font-bold">Anònima</p><p className="text-xs text-slate-500">No es requeriran dades de contacte personals.</p></div>
               </button>
             </div>
@@ -124,24 +130,24 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Nom i Cognoms</label>
-                    <input type="text" className="w-full p-4 rounded-2xl border outline-none focus:ring-2 focus:ring-amber-500" value={formData.informant.name} onChange={(e) => setFormData({...formData, informant: {...formData.informant, name: e.target.value}})} />
+                    <input type="text" className="w-full p-4 rounded-2xl border outline-none focus:ring-2 focus:ring-amber-500" value={formData.informant.name} onChange={(e) => setFormData({ ...formData, informant: { ...formData.informant, name: e.target.value } })} />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase text-slate-400 ml-2">DNI / NIE</label>
-                    <input type="text" className="w-full p-4 rounded-2xl border outline-none focus:ring-2 focus:ring-amber-500" value={formData.informant.dni} onChange={(e) => setFormData({...formData, informant: {...formData.informant, dni: e.target.value}})} />
+                    <input type="text" className="w-full p-4 rounded-2xl border outline-none focus:ring-2 focus:ring-amber-500" value={formData.informant.dni} onChange={(e) => setFormData({ ...formData, informant: { ...formData.informant, dni: e.target.value } })} />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Correu Electrònic</label>
-                    <input type="email" className="w-full p-4 rounded-2xl border outline-none focus:ring-2 focus:ring-amber-500" value={formData.informant.email} onChange={(e) => setFormData({...formData, informant: {...formData.informant, email: e.target.value}})} />
+                    <input type="email" className="w-full p-4 rounded-2xl border outline-none focus:ring-2 focus:ring-amber-500" value={formData.informant.email} onChange={(e) => setFormData({ ...formData, informant: { ...formData.informant, email: e.target.value } })} />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Telèfon de contacte</label>
-                    <input type="tel" className="w-full p-4 rounded-2xl border outline-none focus:ring-2 focus:ring-amber-500" value={formData.informant.phone} onChange={(e) => setFormData({...formData, informant: {...formData.informant, phone: e.target.value}})} />
+                    <input type="tel" className="w-full p-4 rounded-2xl border outline-none focus:ring-2 focus:ring-amber-500" value={formData.informant.phone} onChange={(e) => setFormData({ ...formData, informant: { ...formData.informant, phone: e.target.value } })} />
                   </div>
                 </div>
                 <div className="space-y-1">
                   <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Relació amb el club / víctima</label>
-                  <select className="w-full p-4 rounded-2xl border bg-white outline-none focus:ring-2 focus:ring-amber-500" value={formData.informant.type} onChange={(e) => setFormData({...formData, informant: {...formData.informant, type: e.target.value as ReporterType}})}>
+                  <select className="w-full p-4 rounded-2xl border bg-white outline-none focus:ring-2 focus:ring-amber-500" value={formData.informant.type} onChange={(e) => setFormData({ ...formData, informant: { ...formData.informant, type: e.target.value as ReporterType } })}>
                     {Object.values(ReporterType).map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
@@ -158,15 +164,15 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit }) => {
               <div className="space-y-4 p-8 bg-blue-50/50 rounded-[2rem] border border-blue-100">
                 <p className="text-xs font-black uppercase text-blue-600 tracking-widest mb-4">Dades de la Víctima (Menor)</p>
                 <div className="space-y-4">
-                  <input type="text" placeholder="Nom complet del menor" className="w-full p-4 rounded-2xl border bg-white" value={formData.involved.victimName} onChange={(e) => setFormData({...formData, involved: {...formData.involved, victimName: e.target.value}})} />
+                  <input type="text" placeholder="Nom complet del menor" className="w-full p-4 rounded-2xl border bg-white" value={formData.involved.victimName} onChange={(e) => setFormData({ ...formData, involved: { ...formData.involved, victimName: e.target.value } })} />
                   <div className="grid grid-cols-2 gap-4">
-                    <input type="number" placeholder="Edat" className="w-full p-4 rounded-2xl border bg-white" value={formData.involved.victimAge} onChange={(e) => setFormData({...formData, involved: {...formData.involved, victimAge: e.target.value}})} />
-                    <select className="w-full p-4 rounded-2xl border bg-white" value={formData.involved.victimGender} onChange={(e) => setFormData({...formData, involved: {...formData.involved, victimGender: e.target.value as any}})}>
+                    <input type="number" placeholder="Edat" className="w-full p-4 rounded-2xl border bg-white" value={formData.involved.victimAge} onChange={(e) => setFormData({ ...formData, involved: { ...formData.involved, victimAge: e.target.value } })} />
+                    <select className="w-full p-4 rounded-2xl border bg-white" value={formData.involved.victimGender} onChange={(e) => setFormData({ ...formData, involved: { ...formData.involved, victimGender: e.target.value as any } })}>
                       <option value="">Gènere...</option>
                       {GENDERS.map(g => <option key={g} value={g}>{g}</option>)}
                     </select>
                   </div>
-                  <select className="w-full p-4 rounded-2xl border bg-white" value={formData.involved.victimCategory} onChange={(e) => setFormData({...formData, involved: {...formData.involved, victimCategory: e.target.value}})}>
+                  <select className="w-full p-4 rounded-2xl border bg-white" value={formData.involved.victimCategory} onChange={(e) => setFormData({ ...formData, involved: { ...formData.involved, victimCategory: e.target.value } })}>
                     <option value="">Equip / Categoria...</option>
                     {HANDBOL_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
@@ -175,8 +181,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit }) => {
               <div className="space-y-4 p-8 bg-red-50/50 rounded-[2rem] border border-red-100">
                 <p className="text-xs font-black uppercase text-red-600 tracking-widest mb-4">Persona Denunciada</p>
                 <div className="space-y-4">
-                  <input type="text" placeholder="Nom (o descripció física)" className="w-full p-4 rounded-2xl border bg-white" value={formData.involved.accusedName} onChange={(e) => setFormData({...formData, involved: {...formData.involved, accusedName: e.target.value}})} />
-                  <select className="w-full p-4 rounded-2xl border bg-white" value={formData.involved.accusedRelation} onChange={(e) => setFormData({...formData, involved: {...formData.involved, accusedRelation: e.target.value}})}>
+                  <input type="text" placeholder="Nom (o descripció física)" className="w-full p-4 rounded-2xl border bg-white" value={formData.involved.accusedName} onChange={(e) => setFormData({ ...formData, involved: { ...formData.involved, accusedName: e.target.value } })} />
+                  <select className="w-full p-4 rounded-2xl border bg-white" value={formData.involved.accusedRelation} onChange={(e) => setFormData({ ...formData, involved: { ...formData.involved, accusedRelation: e.target.value } })}>
                     <option value="">Rol al club / Relació...</option>
                     {ACCUSED_ROLES.map(r => <option key={r} value={r}>{r}</option>)}
                   </select>
@@ -190,12 +196,12 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit }) => {
         {step === 3 && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
             <h4 className="text-2xl font-black text-slate-900">3. Detalls de l'Incident</h4>
-            
+
             <div className="space-y-4">
               <label className="text-sm font-bold text-slate-700 block mb-2">Tipus de violència detectada (marcar totes les que corresponguin):</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {Object.values(ViolenceType).map(type => (
-                  <button 
+                  <button
                     key={type}
                     type="button"
                     onClick={() => handleToggleViolenceType(type)}
@@ -210,15 +216,15 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit }) => {
             <div className="grid md:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Data</label>
-                <input type="date" className="w-full p-4 rounded-2xl border bg-white" value={formData.facts.date} onChange={(e) => setFormData({...formData, facts: {...formData.facts, date: e.target.value}})} />
+                <input type="date" className="w-full p-4 rounded-2xl border bg-white" value={formData.facts.date} onChange={(e) => setFormData({ ...formData, facts: { ...formData.facts, date: e.target.value } })} />
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Hora aproximada</label>
-                <input type="time" className="w-full p-4 rounded-2xl border bg-white" value={formData.facts.time} onChange={(e) => setFormData({...formData, facts: {...formData.facts, time: e.target.value}})} />
+                <input type="time" className="w-full p-4 rounded-2xl border bg-white" value={formData.facts.time} onChange={(e) => setFormData({ ...formData, facts: { ...formData.facts, time: e.target.value } })} />
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Ubicació</label>
-                <select className="w-full p-4 rounded-2xl border bg-white" value={formData.facts.location} onChange={(e) => setFormData({...formData, facts: {...formData.facts, location: e.target.value}})}>
+                <select className="w-full p-4 rounded-2xl border bg-white" value={formData.facts.location} onChange={(e) => setFormData({ ...formData, facts: { ...formData.facts, location: e.target.value } })}>
                   <option value="">Selecciona lloc...</option>
                   {MOLINS_LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
                 </select>
@@ -226,10 +232,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit }) => {
             </div>
 
             <div className="space-y-4">
-              <textarea placeholder="Descriu els fets amb el màxim detall possible (què ha passat, com ha passat...)" className="w-full p-6 rounded-[2rem] border h-44 outline-none focus:ring-2 focus:ring-amber-500 leading-relaxed" value={formData.facts.description} onChange={(e) => setFormData({...formData, facts: {...formData.facts, description: e.target.value}})} />
-              
+              <textarea placeholder="Descriu els fets amb el màxim detall possible (què ha passat, com ha passat...)" className="w-full p-6 rounded-[2rem] border h-44 outline-none focus:ring-2 focus:ring-amber-500 leading-relaxed" value={formData.facts.description} onChange={(e) => setFormData({ ...formData, facts: { ...formData.facts, description: e.target.value } })} />
+
               <label className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer border border-slate-200">
-                <input type="checkbox" checked={formData.facts.isRecurring} onChange={(e) => setFormData({...formData, facts: {...formData.facts, isRecurring: e.target.checked}})} className="w-5 h-5 rounded border-slate-300 text-amber-500 focus:ring-amber-500" />
+                <input type="checkbox" checked={formData.facts.isRecurring} onChange={(e) => setFormData({ ...formData, facts: { ...formData.facts, isRecurring: e.target.checked } })} className="w-5 h-5 rounded border-slate-300 text-amber-500 focus:ring-amber-500" />
                 <span className="text-sm font-bold text-slate-700 italic">És un fet que es repeteix en el temps (recurrent)?</span>
               </label>
             </div>
@@ -252,7 +258,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit }) => {
               </div>
               <div className="space-y-4">
                 <p className="text-sm font-bold text-slate-700">Testimonis</p>
-                <textarea placeholder="Si algú més ha vist els fets, indica el seu nom o com el podem identificar..." className="w-full p-6 rounded-[2rem] border h-44 outline-none focus:ring-2 focus:ring-amber-500" value={formData.facts.witnesses} onChange={(e) => setFormData({...formData, facts: {...formData.facts, witnesses: e.target.value}})} />
+                <textarea placeholder="Si algú més ha vist els fets, indica el seu nom o com el podem identificar..." className="w-full p-6 rounded-[2rem] border h-44 outline-none focus:ring-2 focus:ring-amber-500" value={formData.facts.witnesses} onChange={(e) => setFormData({ ...formData, facts: { ...formData.facts, witnesses: e.target.value } })} />
               </div>
             </div>
           </div>
@@ -269,7 +275,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit }) => {
                   En prémer "Enviar", la teva comunicació serà enviada al **Delegat de Protecció de Menors del CH Molins**. Tota la informació serà tractada amb la màxima confidencialitat segons la **Llei Orgànica 8/2021 (LOPIVI)**.
                 </p>
               </div>
-              
+
               <label className="flex items-center gap-4 p-6 bg-white rounded-3xl cursor-pointer shadow-sm hover:shadow-md transition-shadow">
                 <input type="checkbox" checked={gdprAccepted} onChange={(e) => setGdprAccepted(e.target.checked)} className="w-6 h-6 rounded border-slate-300 text-amber-500 focus:ring-amber-500" />
                 <span className="text-sm font-black text-slate-800 uppercase tracking-tight">Accepto el tractament de dades personals per a la gestió d'aquest expedient.</span>
@@ -283,21 +289,21 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit }) => {
           <button onClick={() => step === 1 ? onCancel() : setStep(step - 1)} className="px-6 py-4 text-slate-400 font-black uppercase text-[10px] tracking-widest flex items-center gap-2 hover:text-slate-900 transition-colors">
             <ChevronLeft className="w-4 h-4" /> {step === 1 ? 'Cancel·lar' : 'Tornar enrere'}
           </button>
-          
-          <button 
+
+          <button
             onClick={() => step === 5 ? onSubmit({
               id: Math.random().toString(36).substr(2, 6).toUpperCase(),
               createdAt: new Date().toISOString(),
-              informant: {...formData.informant, isAnonymous},
-              victim: { 
-                name: formData.involved.victimName, 
-                age: formData.involved.victimAge, 
-                gender: formData.involved.victimGender, 
-                category: formData.involved.victimCategory, 
-                entity: 'CH Molins' 
+              informant: { ...formData.informant, isAnonymous },
+              victim: {
+                name: formData.involved.victimName,
+                age: formData.involved.victimAge,
+                gender: formData.involved.victimGender,
+                category: formData.involved.victimCategory,
+                entity: 'CH Molins'
               },
               involved: { accusedName: formData.involved.accusedName, accusedRelation: formData.involved.accusedRelation },
-              facts: {...formData.facts, violenceType: formData.facts.violenceTypes},
+              facts: { ...formData.facts, violenceType: formData.facts.violenceTypes },
               status: 'Pendent',
               gdprAccepted: true
             }) : setStep(step + 1)}

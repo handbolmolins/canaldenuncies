@@ -27,8 +27,12 @@ const InfoProtocol: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="absolute top-0 right-0 p-12 opacity-5 hidden lg:block">
-          <Shield className="w-64 h-64" />
+        <div className="absolute top-0 right-0 p-12 opacity-10 hidden lg:block h-64 w-64">
+          <img
+            src="https://github.com/handbolmolins/URLimagenes/blob/main/MOLINS%20COLOR.png?raw=true"
+            alt="Watermark Escut"
+            className="h-full w-full object-contain"
+          />
         </div>
       </section>
 
@@ -88,10 +92,10 @@ const InfoProtocol: React.FC = () => {
               <h4 className="font-bold text-slate-900">Generalitat de Catalunya</h4>
               <p className="text-sm text-slate-600">Infància i Adolescència - Telèfon d'atenció a la infància i l'adolescència.</p>
             </div>
-            <a 
-              href="https://dretssocials.gencat.cat/ca/ambits_tematics/infancia_i_adolescencia/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href="https://dretssocials.gencat.cat/ca/ambits_tematics/infancia_i_adolescencia/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-6 inline-flex items-center gap-2 text-blue-600 font-bold hover:text-blue-700 transition-colors text-sm"
             >
               Web d'Infància Gencat
@@ -103,10 +107,10 @@ const InfoProtocol: React.FC = () => {
               <h4 className="font-bold text-slate-900">Mossos d'Esquadra</h4>
               <p className="text-sm text-slate-600">Unitat de Protecció de Menors i Atenció a la Víctima.</p>
             </div>
-            <a 
-              href="https://mossos.gencat.cat/ca/consells_de_seguretat/menors/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href="https://mossos.gencat.cat/ca/consells_de_seguretat/menors/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-6 inline-flex items-center gap-2 text-slate-600 font-bold hover:text-slate-900 transition-colors text-sm"
             >
               Consells de Seguretat
