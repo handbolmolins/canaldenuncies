@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Shield, AlertCircle, FileText, LayoutDashboard, Info, PlusCircle, CheckCircle, ChevronRight, ChevronLeft, Send, Users, Lock, LogOut, X, ShieldAlert, Loader2, Cloud, CloudOff, RefreshCw, Settings, Key } from 'lucide-react';
-import emailjs from 'https://esm.sh/@emailjs/browser';
+import emailjs from '@emailjs/browser';
 import { Report, ViolenceType, ReporterType, AppSettings } from './types';
 import ReportForm from './components/ReportForm';
 import Dashboard from './components/Dashboard';
@@ -203,7 +203,7 @@ const App: React.FC = () => {
               <p className="text-slate-500 text-sm">Introdueix la clau compartida del club.</p>
             </div>
             <form onSubmit={submitLogin} className="space-y-6">
-              <input 
+              <input
                 type="password" value={pinInput} onChange={(e) => setPinInput(e.target.value)} placeholder="Clau d'accés"
                 className={`w-full text-center text-2xl p-4 bg-slate-50 border-2 rounded-2xl outline-none ${loginError ? 'border-red-500 animate-shake' : 'border-slate-200 focus:border-blue-500'}`}
               />
@@ -231,7 +231,7 @@ const App: React.FC = () => {
         )}
 
         {currentView === 'report' && <ReportForm onCancel={() => setCurrentView('home')} onSubmit={handleAddReport} />}
-        
+
         {currentView === 'dashboard' && isAdmin && (
           <div className="space-y-4">
             <div className="flex justify-end no-print">
@@ -240,13 +240,13 @@ const App: React.FC = () => {
               </button>
             </div>
             <Dashboard reports={reports} onDeleteReport={async (id) => {
-               const updated = reports.filter(r => r.id !== id);
-               setReports(updated);
-               await sharedStorage.saveAll(updated);
+              const updated = reports.filter(r => r.id !== id);
+              setReports(updated);
+              await sharedStorage.saveAll(updated);
             }} onUpdateStatus={async (id, status) => {
-               const updated = reports.map(r => r.id === id ? { ...r, status } : r);
-               setReports(updated);
-               await sharedStorage.saveAll(updated);
+              const updated = reports.map(r => r.id === id ? { ...r, status } : r);
+              setReports(updated);
+              await sharedStorage.saveAll(updated);
             }} />
           </div>
         )}
@@ -261,30 +261,30 @@ const App: React.FC = () => {
                   <p className="text-slate-500 text-sm">Canvia la clau d'accés compartida del club.</p>
                 </div>
               </div>
-              
+
               <form onSubmit={handleUpdatePin} className="space-y-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Nova Clau d'Accés</label>
-                  <input 
-                    type="text" 
-                    value={newPin} 
+                  <input
+                    type="text"
+                    value={newPin}
                     onChange={(e) => setNewPin(e.target.value)}
                     placeholder="Escriu la nova clau..."
                     className="w-full p-4 bg-slate-50 border rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-bold"
                   />
                   <p className="text-[10px] text-slate-400 italic px-2">Aquest canvi afectarà a tots els administradors en temps real.</p>
                 </div>
-                
+
                 <div className="flex gap-4 pt-4">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => setCurrentView('dashboard')}
                     className="flex-1 py-4 border rounded-2xl font-bold text-slate-500"
                   >
                     Cancel·lar
                   </button>
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     disabled={isSavingPin}
                     className="flex-2 bg-blue-600 text-white px-8 py-4 rounded-2xl font-black shadow-lg shadow-blue-100 flex items-center justify-center gap-2"
                   >
