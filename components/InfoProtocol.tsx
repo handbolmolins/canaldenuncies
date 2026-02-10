@@ -108,7 +108,7 @@ const InfoProtocol: React.FC = () => {
               <p className="text-sm text-slate-600">Unitat de Protecció de Menors i Atenció a la Víctima.</p>
             </div>
             <a
-              href="https://mossos.gencat.cat/ca/consells_de_seguretat/menors/"
+              href="https://mossos.gencat.cat/ca/consells_de_seguretat/persones/dones/joves-com-denunciar/"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-6 inline-flex items-center gap-2 text-slate-600 font-bold hover:text-slate-900 transition-colors text-sm"
