@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Shield, AlertCircle, FileText, LayoutDashboard, Info, PlusCircle, CheckCircle, ChevronRight, ChevronLeft, Send, Users, Lock, LogOut, X, ShieldAlert, Loader2, Cloud, CloudOff, RefreshCw, Settings, Key } from 'lucide-react';
+import { Shield, AlertCircle, FileText, LayoutDashboard, Info, PlusCircle, CheckCircle, ChevronRight, ChevronLeft, Send, Users, Lock, LogOut, X, ShieldAlert, Loader2, Cloud, CloudOff, RefreshCw, Settings, Key, Smartphone } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import { Report, ViolenceType, ReporterType, AppSettings } from './types';
 import ReportForm from './components/ReportForm';
