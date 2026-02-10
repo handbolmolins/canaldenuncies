@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Report } from '../types';
-import { Clock, Shield, AlertTriangle, CheckCircle, FileText, Filter, Search, X, Printer, Trash2, User, MapPin, ExternalLink, EyeOff, Calendar, AlertCircle, Mail, Smartphone } from 'lucide-react';
+import { Clock, Shield, AlertTriangle, CheckCircle, FileText, Filter, Search, X, Printer, Trash2, User, MapPin, ExternalLink, EyeOff, Calendar, AlertCircle, Mail, Smartphone, Paperclip } from 'lucide-react';
 
 interface DashboardProps {
   reports: Report[];
@@ -231,6 +231,27 @@ const Dashboard: React.FC<DashboardProps> = ({ reports, onDeleteReport, onUpdate
                         {selectedReport.status}
                       </span>
                     </div>
+
+                    {selectedReport.attachments && selectedReport.attachments.length > 0 && (
+                      <>
+                        <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest border-l-4 border-amber-500 pl-3 print:text-black print:border-black">Arxius Adjunts</h4>
+                        <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-2 print:bg-white print:border-slate-300">
+                          {selectedReport.attachments.map((url, idx) => (
+                            <a
+                              key={idx}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors group"
+                            >
+                              <Paperclip className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
+                              <span>Document {idx + 1}</span>
+                              <ExternalLink className="w-3 h-3 opacity-50" />
+                            </a>
+                          ))}
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
