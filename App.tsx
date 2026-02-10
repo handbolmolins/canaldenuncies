@@ -119,10 +119,12 @@ const App: React.FC = () => {
         recurrent: newReport.facts.isRecurring ? 'SÍ' : 'NO',
         descripcio: newReport.facts.description,
         testimonis: newReport.facts.witnesses || 'Cap indicat',
-        fitxers_adjunts: newReport.attachments && newReport.attachments.length > 0
-          ? newReport.attachments.join('\n')
+        fitxers_adjunts: (newReport.attachments && newReport.attachments.length > 0)
+          ? newReport.attachments.map((url, i) => `[Fitxer ${i + 1}]: ${url}`).join('\n')
           : 'Cap fitxer adjunt'
       };
+
+      console.log("DEBUG - Paràmetres EmailJS:", templateParams);
 
       // 1. Save to Firestore immediately
       await sharedStorage.appendReport(newReport);
