@@ -268,14 +268,14 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit, onSaveDraft
                     key={type}
                     type="button"
                     onClick={() => handleToggleViolenceType(type)}
-                    className={`p-2 md:p-3 rounded-xl text-[11px] md:text-xs font-bold text-center border-2 transition-all min-h-[4rem] flex items-center justify-center leading-tight ${formData.facts.violenceTypes.includes(type)
+                    className={`px-1 py-2 md:p-3 rounded-xl text-[11px] md:text-xs font-bold text-center border-2 transition-all min-h-[4.5rem] flex items-center justify-center leading-tight break-words ${formData.facts.violenceTypes.includes(type)
                       ? 'border-amber-500 bg-amber-50 text-amber-700'
                       : showErrors && formData.facts.violenceTypes.length === 0
                         ? 'border-red-300 bg-red-50 text-red-700 hover:border-red-400'
                         : 'border-slate-100 text-slate-500 hover:border-slate-200'
                       }`}
                   >
-                    {type}
+                    {type.replace('/', '/\u200B')}
                   </button>
                 ))}
               </div>

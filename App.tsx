@@ -39,6 +39,7 @@ const App: React.FC = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [cloudStatus, setCloudStatus] = useState<'connected' | 'error' | 'syncing'>('connected');
   const [draftReport, setDraftReport] = useState<DraftReport | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   // Nova clau per al formulari de canvi de PIN
   const [newPin, setNewPin] = useState("");
@@ -56,8 +57,29 @@ const App: React.FC = () => {
     const interval = setInterval(() => {
       if (isAdmin && currentView === 'dashboard') syncData();
     }, 120000);
-    return () => clearInterval(interval);
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
   }, [isAdmin, currentView]);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      console.log('User accepted the install prompt');
+    }
+    setDeferredPrompt(null);
+  };
 
   const loadInitialData = async () => {
     try {
@@ -261,6 +283,11 @@ const App: React.FC = () => {
               <button onClick={() => { setCurrentView('report'); setDraftReport(null); }} className="bg-amber-500 hover:bg-amber-600 text-white px-6 md:px-10 py-4 md:py-5 rounded-2xl text-base md:text-lg font-black shadow-xl transition-all hover:-translate-y-1 flex items-center justify-center gap-3 w-full max-w-xs md:w-auto">
                 <PlusCircle className="w-6 h-6" /> Nova Denúncia
               </button>
+              {deferredPrompt && (
+                <button onClick={handleInstallClick} className="bg-slate-900 hover:bg-slate-800 text-white px-6 md:px-10 py-4 md:py-5 rounded-2xl text-base md:text-lg font-black shadow-xl transition-all hover:-translate-y-1 flex items-center justify-center gap-3 w-full max-w-xs md:w-auto mt-2">
+                  <Smartphone className="w-6 h-6" /> Instal·lar Aplicació
+                </button>
+              )}
               {draftReport && (
                 <button onClick={() => setCurrentView('report')} className="bg-blue-500 hover:bg-blue-600 text-white px-4 md:px-8 py-3 md:py-4 rounded-2xl text-sm md:text-base font-bold shadow-lg transition-all hover:-translate-y-1 flex items-center justify-center gap-2 w-full max-w-xs md:w-auto">
                   <FileText className="w-5 h-5" /> Continuar denúncia incompleta
