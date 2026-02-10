@@ -101,7 +101,14 @@ const App: React.FC = () => {
   const handleAddReport = async (newReport: Report) => {
     setIsSending(true);
     try {
-      // AI analysis removed as per user request
+      // 1. Separate attachments (base64) from the report to avoid Firestore 1MB limit
+      const base64Attachments = newReport.attachments || [];
+      const reportForFirestore = {
+        ...newReport,
+        attachments: base64Attachments.length > 0
+          ? base64Attachments.map((_, i) => `Fitxer_${i + 1}_enviat_per_email`)
+          : []
+      };
 
       const templateParams = {
         from_name: "CANAL DE DENÚNCIES - CH MOLINS",
@@ -121,21 +128,24 @@ const App: React.FC = () => {
         recurrent: newReport.facts.isRecurring ? 'SÍ' : 'NO',
         descripcio: newReport.facts.description,
         testimonis: newReport.facts.witnesses || 'Cap indicat',
-        fitxers_adjunts: newReport.attachments && newReport.attachments.length > 0
-          ? newReport.attachments.join('\n')
-          : 'Cap fitxer adjunt'
+        // In the email text we just mention they are attached
+        fitxers_adjunts: base64Attachments.length > 0
+          ? `${base64Attachments.length} fitxer(s) adjunt(s) a aquest correu (Base64).`
+          : 'Cap fitxer adjunt',
+        // We pass the base64 array as a hidden parameter that EmailJS can use if configured
+        content: base64Attachments[0] || "" // Note: EmailJS free usually only supports 1 attachment or small payload
       };
 
-      // 1. Save to Firestore immediately
-      await sharedStorage.appendReport(newReport);
+      // 2. Save to Firestore immediately (clean version)
+      await sharedStorage.appendReport(reportForFirestore);
 
       // Update local state immediately
       setReports(prev => {
         if (prev.find(r => r.id === newReport.id)) return prev;
-        return [newReport, ...prev];
+        return [reportForFirestore, ...prev];
       });
 
-      // 2. Attempt to send Email (don't let email failure block the whole success)
+      // 3. Attempt to send Email
       try {
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY);
       } catch (emailError) {

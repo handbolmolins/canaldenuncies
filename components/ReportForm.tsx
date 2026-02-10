@@ -78,48 +78,36 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit, onSaveDraft
       const newAttachments = [...(formData.attachments || [])];
 
       try {
-        // 1. Ensure Auth
-        if (!auth.currentUser) {
-          console.log("Re-authenticating for upload...");
-          await signInAnonymously(auth);
-        }
+        console.log(`Processing ${e.target.files.length} local files...`);
 
-        // 2. Upload files
-        console.log(`Starting upload of ${e.target.files.length} files...`);
         for (let i = 0; i < e.target.files.length; i++) {
           const file = e.target.files[i];
-          console.log(`Uploading file ${i + 1}/${e.target.files.length}: ${file.name} (${file.size} bytes)`);
-          const storageRef = ref(storage, `evidencias/${Date.now()}_${file.name}`);
 
-          // Create a promise that rejects after 45 seconds
-          const uploadPromise = uploadBytes(storageRef, file);
-          const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Temps d'espera esgotat (45s). Comprova la teva connexió.")), 45000)
-          );
+          // Limit size to ~500KB to avoid EmailJS payload errors
+          if (file.size > 512 * 1024) {
+            showToast(`El fitxer "${file.name}" és massa gran (màxim 500KB). Si us plau, redueix la mida o fes una captura de pantalla.`, 'error');
+            continue;
+          }
 
-          const result = await Promise.race([uploadPromise, timeoutPromise]);
-          console.log("Upload successful, fetching URL...");
+          const reader = new FileReader();
+          const base64Promise = new Promise<string>((resolve, reject) => {
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
 
-          const url = await getDownloadURL(storageRef);
-          console.log("URL fetched:", url);
-          newAttachments.push(url);
+          const base64 = await base64Promise;
+          newAttachments.push(base64);
+          console.log(`File ${file.name} converted to Base64.`);
         }
 
         setFormData({ ...formData, attachments: newAttachments });
-        showToast("Fitxers pujats correctament.", "success");
-      } catch (error: any) {
-        console.error("DEBUG - Full Upload Error Object:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
-        let msg = error.message || "Error desconegut.";
-
-        if (error.code === 'auth/configuration-not-found' || (error.message && error.message.includes('configuration-not-found'))) {
-          msg = "Error de configuració de Firebase (API Key/Storage). Verifica que el servei Storage estigui actiu al panell de Firebase.";
-        } else if (error.code === 'storage/unauthorized') {
-          msg = "Permís denegat. Verifica les regles de seguridad a Firebase Storage.";
-        } else if (error.code === 'storage/retry-limit-exceeded') {
-          msg = "Error de xarxa persistent. Reintenta-ho.";
+        if (newAttachments.length > (formData.attachments || []).length) {
+          showToast("Fitxers preparats per a l'enviament.", "success");
         }
-
-        showToast(`Error al pujar fitxers: ${msg}`, 'error');
+      } catch (error: any) {
+        console.error("File processing error:", error);
+        showToast("Error en processar els fitxers locals.", 'error');
       } finally {
         setIsUploading(false);
         if (e.target) e.target.value = '';
