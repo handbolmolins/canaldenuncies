@@ -26,13 +26,12 @@
             background-position: center;
             background-repeat: no-repeat;
             opacity: 0.08;
-            z-index: 0;
+            z-index: -1;
             pointer-events: none;
         }
 
         #root {
             position: relative;
-            z-index: 1;
             background: transparent !important;
         }
 
@@ -72,7 +71,7 @@
             text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), 0 2px 5px rgba(0, 0, 0, 0.15);
         }
     </style>
-    <link rel="manifest" href="./manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0f172a">
     <link rel="apple-touch-icon"
         href="https://github.com/handbolmolins/URLimagenes/blob/main/MOLINS%20COLOR.png?raw=true">
@@ -81,11 +80,11 @@
 <body>
     <div id="watermark"></div>
     <div id="root"></div>
-    <script type="module" src="./index.tsx"></script>
+    <script type="module" src="/index.tsx"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
+                navigator.serviceWorker.register('/sw.js')
                     .then(reg => console.log('SW registered'))
                     .catch(err => console.log('SW error', err));
             });
