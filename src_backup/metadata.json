@@ -1,0 +1,8 @@
+
+{
+  "name": "Canal de Denúncies - CH Molins de Rei",
+  "description": "Plataforma oficial de comunicació d'incidents per a la protecció de menors del Club Handbol Molins de Rei, alineat amb el protocol de la FCH i la LOPIVI.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
