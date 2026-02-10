@@ -26,6 +26,5 @@ dist-ssr
 # Project specific
 .env
 metadata.json
-.agent/
 .gemini/
 
