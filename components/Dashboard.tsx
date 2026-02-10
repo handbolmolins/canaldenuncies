@@ -16,6 +16,17 @@ const Dashboard: React.FC<DashboardProps> = ({ reports, onDeleteReport, onUpdate
 
   const selectedReport = reports.find(r => r.id === selectedReportId) || null;
 
+  const getStatusStyles = (status: Report['status']) => {
+    switch (status) {
+      case 'Urgència': return 'bg-red-600 text-white';
+      case 'Resolt': return 'bg-green-600 text-white';
+      case 'En Procés': return 'bg-amber-400 text-amber-900';
+      case 'Pendent': return 'bg-slate-100 text-slate-600';
+      default: return 'bg-slate-100 text-slate-600';
+    }
+  };
+
+
   const stats = [
     { label: 'Total Expedients', val: reports.length, icon: FileText, color: 'text-blue-600', bg: 'bg-blue-50' },
     { label: 'Urgència', val: reports.filter(r => r.status === 'Urgència').length, icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-50' },
@@ -95,7 +106,7 @@ const Dashboard: React.FC<DashboardProps> = ({ reports, onDeleteReport, onUpdate
                 </td>
                 <td className="p-6 text-sm text-slate-500">{new Date(r.createdAt).toLocaleDateString()}</td>
                 <td className="p-6">
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${r.status === 'Urgència' ? 'bg-red-600 text-white' : 'bg-slate-100'}`}>
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${getStatusStyles(r.status)}`}>
                     {r.status}
                   </span>
                 </td>
@@ -123,7 +134,7 @@ const Dashboard: React.FC<DashboardProps> = ({ reports, onDeleteReport, onUpdate
                 <p className="font-black text-sm text-slate-900">#{r.id}</p>
                 <p className="text-xs text-slate-500">{new Date(r.createdAt).toLocaleDateString()}</p>
               </div>
-              <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${r.status === 'Urgència' ? 'bg-red-600 text-white' : 'bg-slate-100'}`}>
+              <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${getStatusStyles(r.status)}`}>
                 {r.status}
               </span>
             </div>
@@ -227,7 +238,7 @@ const Dashboard: React.FC<DashboardProps> = ({ reports, onDeleteReport, onUpdate
 
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest border-l-4 border-amber-500 pl-3 print:text-black print:border-black">Estat de l'Expedient</h4>
                     <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 print:bg-white print:border-slate-300">
-                      <span className={`px-4 py-2 rounded-full text-xs font-black uppercase ${selectedReport.status === 'Urgència' ? 'bg-red-600 text-white' : 'bg-slate-200 text-slate-700'}`}>
+                      <span className={`px-4 py-2 rounded-full text-xs font-black uppercase ${getStatusStyles(selectedReport.status)}`}>
                         {selectedReport.status}
                       </span>
                     </div>
