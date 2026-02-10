@@ -254,9 +254,9 @@ const App: React.FC = () => {
           <div className="text-center space-y-8 py-12">
             <div className="relative inline-block">
               <div className="absolute inset-0 bg-amber-500 blur-3xl opacity-10 rounded-full"></div>
-              <h2 className="text-4xl md:text-6xl font-black text-slate-900 relative">Protegir és responsabilitat de tots.</h2>
+              <h2 className="text-4xl md:text-6xl font-black text-slate-900 relative text-shadow">Protegir és responsabilitat de tots.</h2>
             </div>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">Canal de denúncia segur i confidencial per a la protecció integral a la infància i adolescència.</p>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed text-shadow">Canal de denúncia segur i confidencial per a la protecció integral a la infància i adolescència.</p>
             <div className="flex flex-col items-center gap-4">
               <button onClick={() => { setCurrentView('report'); setDraftReport(null); }} className="bg-amber-500 hover:bg-amber-600 text-white px-6 md:px-10 py-4 md:py-5 rounded-2xl text-base md:text-lg font-black shadow-xl transition-all hover:-translate-y-1 flex items-center justify-center gap-3 w-full max-w-xs md:w-auto">
                 <PlusCircle className="w-6 h-6" /> Nova Denúncia
