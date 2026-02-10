@@ -283,11 +283,6 @@ const App: React.FC = () => {
               <button onClick={() => { setCurrentView('report'); setDraftReport(null); }} className="bg-amber-500 hover:bg-amber-600 text-white px-6 md:px-10 py-4 md:py-5 rounded-2xl text-base md:text-lg font-black shadow-xl transition-all hover:-translate-y-1 flex items-center justify-center gap-3 w-full max-w-xs md:w-auto">
                 <PlusCircle className="w-6 h-6" /> Nova Denúncia
               </button>
-              {deferredPrompt && (
-                <button onClick={handleInstallClick} className="bg-slate-900 hover:bg-slate-800 text-white px-6 md:px-10 py-4 md:py-5 rounded-2xl text-base md:text-lg font-black shadow-xl transition-all hover:-translate-y-1 flex items-center justify-center gap-3 w-full max-w-xs md:w-auto mt-2">
-                  <Smartphone className="w-6 h-6" /> Instal·lar Aplicació
-                </button>
-              )}
               {draftReport && (
                 <button onClick={() => setCurrentView('report')} className="bg-blue-500 hover:bg-blue-600 text-white px-4 md:px-8 py-3 md:py-4 rounded-2xl text-sm md:text-base font-bold shadow-lg transition-all hover:-translate-y-1 flex items-center justify-center gap-2 w-full max-w-xs md:w-auto">
                   <FileText className="w-5 h-5" /> Continuar denúncia incompleta
@@ -402,6 +397,19 @@ const App: React.FC = () => {
       <footer className="bg-slate-950 text-slate-400 py-8 px-4 mt-auto no-print text-center text-[10px] font-bold uppercase tracking-[0.2em]">
         &copy; {new Date().getFullYear()} Club Handbol Molins
       </footer>
+
+      {deferredPrompt && (
+        <button
+          onClick={handleInstallClick}
+          className="fixed bottom-6 right-6 z-[200] bg-slate-900 text-white p-4 rounded-full shadow-2xl hover:bg-slate-800 transition-all hover:scale-110 active:scale-95 flex items-center justify-center group"
+          title="Instal·lar Aplicació"
+        >
+          <Smartphone className="w-5 h-5 md:w-6 md:h-6" />
+          <span className="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
+            Instal·lar App
+          </span>
+        </button>
+      )}
 
       {toast && (
         <Toast
