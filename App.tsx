@@ -290,11 +290,11 @@ const App: React.FC = () => {
             </div>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">Canal de denúncia segur i confidencial per a la protecció integral a la infància i adolescència.</p>
             <div className="flex flex-col items-center gap-4">
-              <button onClick={() => { setCurrentView('report'); setDraftReport(null); }} className="bg-amber-500 hover:bg-amber-600 text-white px-10 py-5 rounded-2xl text-lg font-black shadow-xl transition-all hover:-translate-y-1 flex items-center gap-3">
+              <button onClick={() => { setCurrentView('report'); setDraftReport(null); }} className="bg-amber-500 hover:bg-amber-600 text-white px-6 md:px-10 py-4 md:py-5 rounded-2xl text-base md:text-lg font-black shadow-xl transition-all hover:-translate-y-1 flex items-center justify-center gap-3 w-full max-w-xs md:w-auto">
                 <PlusCircle className="w-6 h-6" /> Nova Denúncia
               </button>
               {draftReport && (
-                <button onClick={() => setCurrentView('report')} className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-2xl text-base font-bold shadow-lg transition-all hover:-translate-y-1 flex items-center gap-2">
+                <button onClick={() => setCurrentView('report')} className="bg-blue-500 hover:bg-blue-600 text-white px-4 md:px-8 py-3 md:py-4 rounded-2xl text-sm md:text-base font-bold shadow-lg transition-all hover:-translate-y-1 flex items-center justify-center gap-2 w-full max-w-xs md:w-auto">
                   <FileText className="w-5 h-5" /> Continuar denúncia incompleta
                 </button>
               )}

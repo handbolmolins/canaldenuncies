@@ -167,11 +167,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit, onSaveDraft
 
       <div className="p-8 md:p-12">
         {/* Progress Bar */}
-        <div className="flex items-center justify-between mb-12 max-w-md mx-auto">
+        <div className="flex items-center justify-between mb-12 max-w-md mx-auto px-2">
           {[1, 2, 3, 4, 5].map((s) => (
             <div key={s} className="flex flex-col items-center gap-2">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all ${step === s ? 'bg-amber-500 text-white ring-4 ring-amber-100' : step > s ? 'bg-green-500 text-white' : 'bg-slate-100 text-slate-400'}`}>
-                {step > s ? <CheckCircle className="w-6 h-6" /> : s}
+              <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center font-bold text-xs md:text-sm transition-all ${step === s ? 'bg-amber-500 text-white ring-4 ring-amber-100' : step > s ? 'bg-green-500 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                {step > s ? <CheckCircle className="w-5 h-5 md:w-6 md:h-6" /> : s}
               </div>
             </div>
           ))}
@@ -274,7 +274,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit, onSaveDraft
                     key={type}
                     type="button"
                     onClick={() => handleToggleViolenceType(type)}
-                    className={`p-3 rounded-xl text-[10px] font-bold text-center border-2 transition-all ${formData.facts.violenceTypes.includes(type)
+                    className={`p-2 md:p-3 rounded-xl text-[9px] md:text-[10px] font-bold text-center border-2 transition-all min-h-[4rem] flex items-center justify-center leading-tight ${formData.facts.violenceTypes.includes(type)
                       ? 'border-amber-500 bg-amber-50 text-amber-700'
                       : showErrors && formData.facts.violenceTypes.length === 0
                         ? 'border-red-300 bg-red-50 text-red-700 hover:border-red-400'
@@ -397,9 +397,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit, onSaveDraft
         )}
 
         {/* Navigation */}
-        <div className="flex items-center justify-between mt-12 pt-8 border-t border-slate-100">
-          <button onClick={() => step === 1 ? onCancel() : setStep(step - 1)} className="px-6 py-4 text-slate-400 font-black uppercase text-[10px] tracking-widest flex items-center gap-2 hover:text-slate-900 transition-colors">
-            <ChevronLeft className="w-4 h-4" /> {step === 1 ? 'Cancel·lar' : 'Tornar enrere'}
+        <div className="flex items-center justify-between mt-12 pt-8 border-t border-slate-100 gap-2">
+          <button onClick={() => step === 1 ? onCancel() : setStep(step - 1)} className="px-3 md:px-6 py-4 text-slate-400 font-black uppercase text-[9px] md:text-[10px] tracking-widest flex items-center gap-1 md:gap-2 hover:text-slate-900 transition-colors">
+            <ChevronLeft className="w-4 h-4" /> {step === 1 ? 'Cancel·lar' : (
+              <span className="truncate">Tornar</span>
+            )}
           </button>
 
           <button
@@ -432,7 +434,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit, onSaveDraft
               }
             }}
             disabled={!isStepValid() || isUploading}
-            className={`px-12 py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all ${isStepValid() && !isUploading ? 'bg-amber-500 text-white shadow-xl shadow-amber-100 hover:-translate-y-1 hover:bg-amber-600' : 'bg-slate-200 text-slate-400 hover:bg-slate-300 cursor-not-allowed hidden-while-loading'}`}
+            className={`px-6 md:px-12 py-4 md:py-5 rounded-[2rem] font-black text-[10px] md:text-xs uppercase tracking-widest transition-all ${isStepValid() && !isUploading ? 'bg-amber-500 text-white shadow-xl shadow-amber-100 hover:-translate-y-1 hover:bg-amber-600' : 'bg-slate-200 text-slate-400 hover:bg-slate-300 cursor-not-allowed hidden-while-loading'}`}
           >
             {isUploading ? 'Pujant...' : (step === 5 ? 'Enviar ara' : 'Següent pas')}
           </button>
