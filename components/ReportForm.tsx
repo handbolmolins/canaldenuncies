@@ -9,6 +9,7 @@ import { ViolenceType, ReporterType, Report } from '../types';
 import { storage, auth } from '../services/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { signInAnonymously } from 'firebase/auth';
+import { uploadToCloudinary } from '../services/cloudinaryService';
 
 interface ReportFormProps {
   onCancel: () => void;
@@ -78,36 +79,29 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit, onSaveDraft
       const newAttachments = [...(formData.attachments || [])];
 
       try {
-        console.log(`Processing ${e.target.files.length} local files...`);
+        console.log(`Uploading ${e.target.files.length} files to Cloudinary...`);
 
         for (let i = 0; i < e.target.files.length; i++) {
           const file = e.target.files[i];
 
-          // Limit size to ~200KB to avoid EmailJS payload errors
-          if (file.size > 200 * 1024) {
-            showToast(`El fitxer "${file.name}" és massa gran (màxim 200KB). Si us plau, redueix la mida, passa'l per WhatsApp o fes una captura de pantalla.`, 'error');
+          // Limit size to 10MB for Cloudinary
+          if (file.size > 10 * 1024 * 1024) {
+            showToast(`El fitxer "${file.name}" és massa gran (màxim 10MB).`, 'error');
             continue;
           }
 
-          const reader = new FileReader();
-          const base64Promise = new Promise<string>((resolve, reject) => {
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          });
-
-          const base64 = await base64Promise;
-          newAttachments.push(base64);
-          console.log(`File ${file.name} converted to Base64.`);
+          const url = await uploadToCloudinary(file);
+          newAttachments.push(url);
+          console.log(`File ${file.name} uploaded successfully: ${url}`);
         }
 
         setFormData({ ...formData, attachments: newAttachments });
         if (newAttachments.length > (formData.attachments || []).length) {
-          showToast("Fitxers preparats per a l'enviament.", "success");
+          showToast("Fitxers pujats correctament.", "success");
         }
       } catch (error: any) {
-        console.error("File processing error:", error);
-        showToast("Error en processar els fitxers locals.", 'error');
+        console.error("Cloudinary upload error:", error);
+        showToast(`Error al pujar els fitxers: ${error.message || 'Error de connexió'}`, 'error');
       } finally {
         setIsUploading(false);
         if (e.target) e.target.value = '';

@@ -101,15 +101,6 @@ const App: React.FC = () => {
   const handleAddReport = async (newReport: Report) => {
     setIsSending(true);
     try {
-      // 1. Separate attachments (base64) from the report to avoid Firestore 1MB limit
-      const base64Attachments = newReport.attachments || [];
-      const reportForFirestore = {
-        ...newReport,
-        attachments: base64Attachments.length > 0
-          ? base64Attachments.map((_, i) => `Fitxer_${i + 1}_enviat_per_email`)
-          : []
-      };
-
       const templateParams = {
         from_name: "CANAL DE DENÚNCIES - CH MOLINS",
         expedient_id: newReport.id,
@@ -128,51 +119,26 @@ const App: React.FC = () => {
         recurrent: newReport.facts.isRecurring ? 'SÍ' : 'NO',
         descripcio: newReport.facts.description,
         testimonis: newReport.facts.witnesses || 'Cap indicat',
-        // In the email text we just mention they are attached
-        fitxers_adjunts: base64Attachments.length > 0
-          ? `${base64Attachments.length} fitxer(s) adjunt(s) a aquest correu (Base64).`
-          : 'Cap fitxer adjunt',
-        // We pass the base64 array as a hidden parameter that EmailJS can use if configured
-        content: base64Attachments[0] || "" // Note: EmailJS free usually only supports 1 attachment or small payload
+        fitxers_adjunts: newReport.attachments && newReport.attachments.length > 0
+          ? newReport.attachments.join('\n')
+          : 'Cap fitxer adjunt'
       };
 
-      // 2. Save to Firestore immediately (clean version)
-      await sharedStorage.appendReport(reportForFirestore);
+      // 1. Save to Firestore immediately
+      await sharedStorage.appendReport(newReport);
 
       // Update local state immediately
       setReports(prev => {
         if (prev.find(r => r.id === newReport.id)) return prev;
-        return [reportForFirestore, ...prev];
+        return [newReport, ...prev];
       });
 
-      // 3. Attempt to send Email
+      // 2. Attempt to send Email
       try {
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY);
       } catch (emailError) {
-        console.error("EmailJS Primary Error:", emailError);
-
-        // Fallback: If it failed (likely due to size), try sending WITHOUT attachments
-        if (base64Attachments.length > 0) {
-          try {
-            console.log("Retrying email without attachments...");
-            const fallbackParams = {
-              ...templateParams,
-              content: "",
-              fitxers_adjunts: `${base64Attachments.length} fitxer(s) no s'han pogut adjuntar per mida, però estan registrats al sistema.`
-            };
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, fallbackParams, EMAILJS_PUBLIC_KEY);
-            showToast(`Denúncia #${newReport.id} guardada. El correu s'ha enviat sense els adjunts per excés de mida. El Delegat els pot consultar al panell.`, 'info');
-          } catch (retryError) {
-            console.error("EmailJS Retry Error:", retryError);
-            showToast(`La denúncia s'ha guardat (Expedient #${newReport.id}), però no s'ha pogut enviar el correu de notificació.`, 'info');
-          }
-        } else {
-          showToast(`La denúncia s'ha guardat (Expedient #${newReport.id}), però hi ha un error amb el servei de correu.`, 'info');
-        }
-
-        setIsSending(false);
-        setCurrentView('home');
-        return; // Exit as it's already "processed" even if email struggled
+        console.error("EmailJS Error:", emailError);
+        showToast(`La denúncia s'ha guardat (Expedient #${newReport.id}), però hi ha hagut un problema enviant la notificació per email.`, 'info');
       }
 
       setIsSending(false);
@@ -182,7 +148,7 @@ const App: React.FC = () => {
     } catch (error) {
       console.error("Submission Error:", error);
       setIsSending(false);
-      showToast("Error crític en registrar la denúncia. Si us plau, verifica la teva connexió o intenta-ho més tard.", 'error');
+      showToast("Error crític en registrar la denúncia. Si us plau, verifica la teva connexió.", 'error');
     }
   };
 
