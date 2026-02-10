@@ -83,9 +83,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit, onSaveDraft
         for (let i = 0; i < e.target.files.length; i++) {
           const file = e.target.files[i];
 
-          // Limit size to ~500KB to avoid EmailJS payload errors
-          if (file.size > 512 * 1024) {
-            showToast(`El fitxer "${file.name}" és massa gran (màxim 500KB). Si us plau, redueix la mida o fes una captura de pantalla.`, 'error');
+          // Limit size to ~200KB to avoid EmailJS payload errors
+          if (file.size > 200 * 1024) {
+            showToast(`El fitxer "${file.name}" és massa gran (màxim 200KB). Si us plau, redueix la mida, passa'l per WhatsApp o fes una captura de pantalla.`, 'error');
             continue;
           }
 

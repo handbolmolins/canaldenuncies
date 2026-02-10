@@ -149,11 +149,30 @@ const App: React.FC = () => {
       try {
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY);
       } catch (emailError) {
-        console.error("EmailJS Error:", emailError);
-        showToast(`La denúncia s'ha guardat correctament (Expedient #${newReport.id}), però hi ha hagut un problema enviant la notificació per email. El Delegat de Protecció la podrà veure igualment al panell de gestió.`, 'info');
+        console.error("EmailJS Primary Error:", emailError);
+
+        // Fallback: If it failed (likely due to size), try sending WITHOUT attachments
+        if (base64Attachments.length > 0) {
+          try {
+            console.log("Retrying email without attachments...");
+            const fallbackParams = {
+              ...templateParams,
+              content: "",
+              fitxers_adjunts: `${base64Attachments.length} fitxer(s) no s'han pogut adjuntar per mida, però estan registrats al sistema.`
+            };
+            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, fallbackParams, EMAILJS_PUBLIC_KEY);
+            showToast(`Denúncia #${newReport.id} guardada. El correu s'ha enviat sense els adjunts per excés de mida. El Delegat els pot consultar al panell.`, 'info');
+          } catch (retryError) {
+            console.error("EmailJS Retry Error:", retryError);
+            showToast(`La denúncia s'ha guardat (Expedient #${newReport.id}), però no s'ha pogut enviar el correu de notificació.`, 'info');
+          }
+        } else {
+          showToast(`La denúncia s'ha guardat (Expedient #${newReport.id}), però hi ha un error amb el servei de correu.`, 'info');
+        }
+
         setIsSending(false);
         setCurrentView('home');
-        return; // Exit early but successfully as it's saved
+        return; // Exit as it's already "processed" even if email struggled
       }
 
       setIsSending(false);
