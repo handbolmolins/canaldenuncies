@@ -85,29 +85,40 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit, onSaveDraft
         }
 
         // 2. Upload files
+        console.log(`Starting upload of ${e.target.files.length} files...`);
         for (let i = 0; i < e.target.files.length; i++) {
           const file = e.target.files[i];
-          const storageRef = ref(storage, `evidencias/${Date.now()}_${file.name}`); // Corrected: Using backticks for template literal
+          console.log(`Uploading file ${i + 1}/${e.target.files.length}: ${file.name} (${file.size} bytes)`);
+          const storageRef = ref(storage, `evidencias/${Date.now()}_${file.name}`);
 
-          // Create a promise that rejects after 30 seconds
+          // Create a promise that rejects after 45 seconds
           const uploadPromise = uploadBytes(storageRef, file);
           const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Temps d'espera esgotat (30s). Comprova la teva connexió.")), 30000)
+            setTimeout(() => reject(new Error("Temps d'espera esgotat (45s). Comprova la teva connexió.")), 45000)
           );
 
-          await Promise.race([uploadPromise, timeoutPromise]);
+          const result = await Promise.race([uploadPromise, timeoutPromise]);
+          console.log("Upload successful, fetching URL...");
 
           const url = await getDownloadURL(storageRef);
+          console.log("URL fetched:", url);
           newAttachments.push(url);
         }
 
         setFormData({ ...formData, attachments: newAttachments });
+        showToast("Fitxers pujats correctament.", "success");
       } catch (error: any) {
-        console.error("Upload error details:", error);
-        let msg = "Error desconegut.";
-        if (error.code === 'storage/unauthorized') msg = "Permís denegat. Torna a carregar la pàgina.";
-        if (error.code === 'storage/canceled') msg = "Pujada cancel·lada.";
-        if (error.message) msg = error.message;
+        console.error("DEBUG - Full Upload Error Object:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        let msg = error.message || "Error desconegut.";
+
+        if (error.code === 'auth/configuration-not-found' || (error.message && error.message.includes('configuration-not-found'))) {
+          msg = "Error de configuració de Firebase (API Key/Storage). Verifica que el servei Storage estigui actiu al panell de Firebase.";
+        } else if (error.code === 'storage/unauthorized') {
+          msg = "Permís denegat. Verifica les regles de seguridad a Firebase Storage.";
+        } else if (error.code === 'storage/retry-limit-exceeded') {
+          msg = "Error de xarxa persistent. Reintenta-ho.";
+        }
+
         showToast(`Error al pujar fitxers: ${msg}`, 'error');
       } finally {
         setIsUploading(false);
