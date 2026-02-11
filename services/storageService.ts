@@ -36,6 +36,20 @@ export const sharedStorage = {
     }
   },
 
+  async fetchReportById(id: string): Promise<Report | null> {
+    try {
+      const docRef = doc(db, 'reports', id);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return { ...docSnap.data(), id: docSnap.id } as Report;
+      }
+      return null;
+    } catch (error) {
+      console.error("Firestore fetch by ID error", error);
+      return null;
+    }
+  },
+
   async saveAll(reports: Report[]): Promise<boolean> {
     try {
       // For Firestore, we update/set each document.

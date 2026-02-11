@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Shield, AlertCircle, FileText, LayoutDashboard, Info, PlusCircle, CheckCircle, ChevronRight, ChevronLeft, Send, Users, Lock, LogOut, X, ShieldAlert, Loader2, Cloud, CloudOff, RefreshCw, Settings, Key, Smartphone } from 'lucide-react';
+import { Shield, AlertCircle, FileText, LayoutDashboard, Info, PlusCircle, CheckCircle, ChevronRight, ChevronLeft, Send, Users, Lock, LogOut, X, ShieldAlert, Loader2, Cloud, CloudOff, RefreshCw, Settings, Key, Smartphone, Search, Clock } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import { Report, ViolenceType, ReporterType, AppSettings } from './types';
 import ReportForm from './components/ReportForm';
@@ -16,7 +16,7 @@ const EMAILJS_SERVICE_ID = "service_q9av1w9";
 const EMAILJS_TEMPLATE_ID = "template_we1723c";
 const EMAILJS_PUBLIC_KEY = "nnpheQb2O-_FCqSRa";
 
-type View = 'home' | 'report' | 'dashboard' | 'info' | 'settings';
+type View = 'home' | 'report' | 'dashboard' | 'info' | 'settings' | 'submitted' | 'tracking';
 
 interface DraftReport {
   formData: any;
@@ -40,6 +40,10 @@ const App: React.FC = () => {
   const [cloudStatus, setCloudStatus] = useState<'connected' | 'error' | 'syncing'>('connected');
   const [draftReport, setDraftReport] = useState<DraftReport | null>(null);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [lastSubmittedId, setLastSubmittedId] = useState<string | null>(null);
+  const [trackedReport, setTrackedReport] = useState<Report | null>(null);
+  const [isSearchingReport, setIsSearchingReport] = useState(false);
+  const [trackerInput, setTrackerInput] = useState("");
 
   // Nova clau per al formulari de canvi de PIN
   const [newPin, setNewPin] = useState("");
@@ -88,11 +92,7 @@ const App: React.FC = () => {
       console.error("Anonymous auth failed", error);
     }
     setCloudStatus('syncing');
-    const [remoteReports, remoteSettings] = await Promise.all([
-      sharedStorage.fetchAll(),
-      sharedStorage.fetchSettings()
-    ]);
-    setReports(remoteReports);
+    const remoteSettings = await sharedStorage.fetchSettings();
     setAppSettings(remoteSettings);
     setCloudStatus('connected');
   };
@@ -112,7 +112,7 @@ const App: React.FC = () => {
   };
 
   // Fix: Added missing handleAdminAccess function to fix line 163 error
-  const handleAdminAccess = () => {
+  const handleAdminAccess = async () => {
     if (isAdmin) {
       setCurrentView('dashboard');
     } else {
@@ -167,7 +167,8 @@ const App: React.FC = () => {
 
       setIsSending(false);
       setDraftReport(null);
-      setCurrentView('home');
+      setLastSubmittedId(newReport.id);
+      setCurrentView('submitted');
       showToast(`Expedient #${newReport.id} enviat i registrat correctament.`, 'success');
     } catch (error) {
       console.error("Submission Error:", error);
@@ -199,18 +200,50 @@ const App: React.FC = () => {
     setIsSavingPin(false);
   };
 
-  const submitLogin = (e: React.FormEvent) => {
+  const submitLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const currentPin = appSettings?.adminPin || "handbolmolins1944";
     if (pinInput === currentPin) {
       setIsAdmin(true);
       setShowAdminLogin(false);
+
+      // Load reports after admin login
+      setCloudStatus('syncing');
+      try {
+        const remoteReports = await sharedStorage.fetchAll();
+        setReports(remoteReports);
+        setCloudStatus('connected');
+      } catch (e) {
+        setCloudStatus('error');
+      }
+
       setCurrentView('dashboard');
       setLoginError(false);
       setPinInput("");
     } else {
       setLoginError(true);
       setPinInput("");
+    }
+  };
+
+  const handleSearchReport = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (trackerInput.length < 4) {
+      showToast("Introdueix un codi d'expedient vàlid.", 'error');
+      return;
+    }
+    setIsSearchingReport(true);
+    try {
+      const report = await sharedStorage.fetchReportById(trackerInput.toUpperCase());
+      if (report) {
+        setTrackedReport(report);
+      } else {
+        showToast("No s'ha trobat cap expedient amb aquest codi.", 'error');
+      }
+    } catch (error) {
+      showToast("Error en cercar l'expedient.", 'error');
+    } finally {
+      setIsSearchingReport(false);
     }
   };
 
@@ -285,6 +318,11 @@ const App: React.FC = () => {
               <button onClick={() => { setCurrentView('report'); setDraftReport(null); }} className="bg-amber-500 hover:bg-amber-600 text-white px-6 md:px-10 py-4 md:py-5 rounded-2xl text-base md:text-lg font-black shadow-xl transition-all hover:-translate-y-1 flex items-center justify-center gap-3 w-full max-w-xs md:w-auto">
                 <PlusCircle className="w-6 h-6" /> Nova Denúncia
               </button>
+
+              <button onClick={() => { setCurrentView('tracking'); setTrackedReport(null); setTrackerInput(""); }} className="bg-white border-2 border-slate-200 text-slate-600 px-6 md:px-10 py-3 md:py-4 rounded-2xl text-sm md:text-base font-bold shadow-sm transition-all hover:border-amber-500 hover:text-amber-600 flex items-center justify-center gap-2 w-full max-w-xs md:w-auto">
+                <Search className="w-5 h-5" /> Consultar estat de denúncia
+              </button>
+
               {draftReport && (
                 <button onClick={() => setCurrentView('report')} className="bg-blue-500 hover:bg-blue-600 text-white px-4 md:px-8 py-3 md:py-4 rounded-2xl text-sm md:text-base font-bold shadow-lg transition-all hover:-translate-y-1 flex items-center justify-center gap-2 w-full max-w-xs md:w-auto">
                   <FileText className="w-5 h-5" /> Continuar denúncia incompleta
@@ -392,6 +430,142 @@ const App: React.FC = () => {
               </div>
             )}
             <InfoProtocol />
+          </div>
+        )}
+
+        {currentView === 'submitted' && (
+          <div className="max-w-2xl mx-auto py-12 text-center space-y-8 animate-in fade-in zoom-in-95">
+            <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+              <CheckCircle className="w-12 h-12" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-3xl font-black text-slate-900 tracking-tight">Denúncia enviada satisfactòriament</h2>
+              <p className="text-slate-500 font-medium">L'expedient ha estat registrat i el comitè de protecció ha estat notificat.</p>
+            </div>
+
+            <div className="bg-slate-50 border-2 border-dashed border-slate-200 p-8 rounded-[2.5rem] space-y-4">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">El teu codi de seguiment</p>
+              <div className="flex items-center justify-center gap-4">
+                <span className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">#{lastSubmittedId}</span>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(lastSubmittedId || "");
+                    showToast("Codi copiat al porta-retalls", "success");
+                  }}
+                  className="p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm"
+                  title="Copiar codi"
+                >
+                  <RefreshCw className="w-6 h-6" />
+                </button>
+              </div>
+              <p className="text-xs text-slate-500 font-bold max-w-xs mx-auto">Guarda aquest codi per poder consultar l'estat de la teva denúncia en qualsevol moment.</p>
+            </div>
+
+            <div className="pt-8">
+              <button
+                onClick={() => setCurrentView('home')}
+                className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl hover:-translate-y-1 transition-all"
+              >
+                Tornar a l'Inici
+              </button>
+            </div>
+          </div>
+        )}
+
+        {currentView === 'tracking' && (
+          <div className="max-w-2xl mx-auto py-8 animate-in fade-in slide-in-from-bottom-4">
+            <div className="bg-white rounded-[2.5rem] border shadow-2xl p-8 md:p-12 space-y-8">
+              <div className="text-center space-y-2">
+                <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl w-fit mx-auto mb-4"><Search className="w-8 h-8" /></div>
+                <h3 className="text-2xl font-black text-slate-900">Seguiment de Denúncia</h3>
+                <p className="text-slate-500 text-sm font-medium">Introdueix el codi de 6 digits per veure l'estat actual.</p>
+              </div>
+
+              {!trackedReport ? (
+                <form onSubmit={handleSearchReport} className="space-y-6">
+                  <div className="relative">
+                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-slate-300">#</span>
+                    <input
+                      type="text"
+                      value={trackerInput}
+                      onChange={(e) => setTrackerInput(e.target.value.toUpperCase())}
+                      placeholder="XXXXXX"
+                      maxLength={6}
+                      className="w-full pl-12 pr-6 py-6 bg-slate-50 border-2 border-slate-100 rounded-[2rem] text-3xl font-black tracking-widest outline-none focus:border-amber-500 transition-all text-center uppercase"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isSearchingReport}
+                    className="w-full bg-slate-900 text-white py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 disabled:opacity-50"
+                  >
+                    {isSearchingReport ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Search className="w-5 h-5" /> Consultar Estat</>}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentView('home')}
+                    className="w-full text-slate-400 font-bold text-xs uppercase tracking-widest pt-2"
+                  >
+                    Cancel·lar
+                  </button>
+                </form>
+              ) : (
+                <div className="space-y-8 animate-in fade-in zoom-in-95">
+                  <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 space-y-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Expedient</p>
+                        <p className="text-2xl font-black text-slate-900">#{trackedReport.id}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Data Inici</p>
+                        <p className="text-sm font-bold text-slate-700">{new Date(trackedReport.createdAt).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+
+                    <div className="pt-6 border-t border-slate-200">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Estat Actual</p>
+                      <div className="flex items-center gap-4">
+                        <div className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-sm ${trackedReport.status === 'Resolt' ? 'bg-green-500 text-white' :
+                          trackedReport.status === 'En Procés' ? 'bg-amber-500 text-white' :
+                            trackedReport.status === 'Urgència' ? 'bg-red-600 text-white' :
+                              'bg-slate-200 text-slate-600'
+                          }`}>
+                          {trackedReport.status}
+                        </div>
+                        {trackedReport.status === 'Pendent' && (
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <Clock className="w-4 h-4" />
+                            <span className="text-[10px] font-bold italic">En espera de revisió</span>
+                          </div>
+                        )}
+                        {trackedReport.status === 'En Procés' && (
+                          <div className="flex items-center gap-2 text-amber-500">
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span className="text-[10px] font-bold italic">S'està gestionant</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-4">
+                    <button
+                      onClick={() => setTrackedReport(null)}
+                      className="w-full py-5 border-2 border-slate-100 rounded-[2rem] font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all"
+                    >
+                      Cercar un altre codi
+                    </button>
+                    <button
+                      onClick={() => setCurrentView('home')}
+                      className="w-full bg-slate-900 text-white py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest"
+                    >
+                      Tornar a l'Inici
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </main>
