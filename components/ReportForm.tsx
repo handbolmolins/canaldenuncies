@@ -60,9 +60,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit, onSaveDraft
       violenceTypes: [] as ViolenceType[],
       description: '',
       witnesses: '',
-      isRecurring: false
+      isRecurring: false,
+      isKnownByOthers: false
     },
-    attachments: (initialDraft?.formData?.attachments || []) as string[]
+    attachments: (initialDraft?.formData?.attachments || []) as string[],
+    requestMeeting: initialDraft?.formData?.requestMeeting || false
   });
 
   const handleToggleViolenceType = (type: ViolenceType) => {
@@ -367,6 +369,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit, onSaveDraft
                 <textarea placeholder="Si algú més ha vist els fets, indica el seu nom o com el podem identificar..." className="w-full p-6 rounded-[2rem] border h-44 outline-none focus:ring-2 focus:ring-amber-500" value={formData.facts.witnesses} onChange={(e) => setFormData({ ...formData, facts: { ...formData.facts, witnesses: e.target.value } })} />
               </div>
             </div>
+
+            <div className="space-y-4 pt-4">
+              <label className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer border border-slate-200">
+                <input type="checkbox" checked={formData.facts.isKnownByOthers} onChange={(e) => setFormData({ ...formData, facts: { ...formData.facts, isKnownByOthers: e.target.checked } })} className="w-5 h-5 rounded border-slate-300 text-amber-500 focus:ring-amber-500" />
+                <span className="text-sm font-bold text-slate-700 italic">El fet, que es vol comunicar, és conegut per altres persones?</span>
+              </label>
+            </div>
           </div>
         )}
 
@@ -385,6 +394,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit, onSaveDraft
               <label className={`flex items-center gap-4 p-6 bg-white rounded-3xl cursor-pointer shadow-sm hover:shadow-md transition-shadow ${showErrors && !gdprAccepted ? 'border-2 border-red-500' : ''}`}>
                 <input type="checkbox" checked={gdprAccepted} onChange={(e) => setGdprAccepted(e.target.checked)} className="w-6 h-6 rounded border-slate-300 text-amber-500 focus:ring-amber-500" />
                 <span className="text-sm font-black text-slate-800 uppercase tracking-tight">Accepto el tractament de dades personals per a la gestió d'aquest expedient.</span>
+              </label>
+
+              <label className="flex items-center gap-4 p-6 bg-white rounded-3xl cursor-pointer shadow-sm hover:shadow-md transition-shadow border border-slate-100">
+                <input type="checkbox" checked={formData.requestMeeting} onChange={(e) => setFormData({ ...formData, requestMeeting: e.target.checked })} className="w-6 h-6 rounded border-slate-300 text-amber-500 focus:ring-amber-500" />
+                <span className="text-sm font-black text-slate-800 uppercase tracking-tight">Vols sol·licitar una reunió presencial amb l'organització?</span>
               </label>
             </div>
           </div>
@@ -418,7 +432,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ onCancel, onSubmit, onSaveDraft
                     facts: { ...formData.facts, violenceType: formData.facts.violenceTypes },
                     attachments: formData.attachments || [],
                     status: 'Pendent',
-                    gdprAccepted: true
+                    gdprAccepted: true,
+                    requestMeeting: formData.requestMeeting
                   });
                 } else {
                   setStep(step + 1);

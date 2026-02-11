@@ -63,11 +63,13 @@ export interface Report {
     description: string;
     witnesses: string;
     isRecurring: boolean;
+    isKnownByOthers: boolean;
   };
   aiAnalysis?: AIAnalysis;
   attachments?: string[];
   status: 'Pendent' | 'En Procés' | 'Resolt' | 'Urgència';
   gdprAccepted: boolean;
+  requestMeeting: boolean;
 }
 
 export interface Indicator {
