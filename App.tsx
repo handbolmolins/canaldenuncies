@@ -226,7 +226,7 @@ const App: React.FC = () => {
               <h1 className="font-black text-slate-900 leading-tight text-xl tracking-tight uppercase">Canal de Denúncies</h1>
               <div className="flex items-center gap-2">
                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">
-                  <a href="protocolo_lopivi.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline transition-colors">Protocol LOPIVI</a> · CH Molins
+                  <a href="Protocol_LOPIVI_Club_Handbol_Molins.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline transition-colors">Protocol LOPIVI</a> · CH Molins
                 </p>
                 {cloudStatus === 'connected' && <Cloud className="w-3 h-3 text-green-500" />}
                 {cloudStatus === 'syncing' && <RefreshCw className="w-3 h-3 text-blue-500 animate-spin" />}
