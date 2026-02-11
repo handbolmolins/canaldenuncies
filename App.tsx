@@ -111,7 +111,6 @@ const App: React.FC = () => {
     }
   };
 
-  // Fix: Added missing handleAdminAccess function to fix line 163 error
   const handleAdminAccess = async () => {
     if (isAdmin) {
       setCurrentView('dashboard');
@@ -311,9 +310,9 @@ const App: React.FC = () => {
           <div className="text-center space-y-8 py-12">
             <div className="relative inline-block">
               <div className="absolute inset-0 bg-amber-500 blur-3xl opacity-10 rounded-full"></div>
-              <h2 className="text-4xl md:text-6xl font-black text-slate-900 relative text-shadow">Protegir és responsabilitat de tots.</h2>
+              <h2 className="text-4xl md:text-6xl font-black text-slate-900 relative">Protegir és responsabilitat de tots.</h2>
             </div>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed text-shadow">Canal de denúncia segur i confidencial per a la protecció integral a la infància i adolescència.</p>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">Canal de denúncia segur i confidencial per a la protecció integral a la infància i adolescència.</p>
             <div className="flex flex-col items-center gap-4">
               <button onClick={() => { setCurrentView('report'); setDraftReport(null); }} className="bg-amber-500 hover:bg-amber-600 text-white px-6 md:px-10 py-4 md:py-5 rounded-2xl text-base md:text-lg font-black shadow-xl transition-all hover:-translate-y-1 flex items-center justify-center gap-3 w-full max-w-xs md:w-auto">
                 <PlusCircle className="w-6 h-6" /> Nova Denúncia
@@ -565,6 +564,25 @@ const App: React.FC = () => {
                         </div>
                       </div>
                     )}
+
+                    <div className="pt-6 border-t border-slate-200">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Resum de la Denúncia</p>
+                      <div className="space-y-4">
+                        <div className="flex flex-wrap gap-2">
+                          <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-blue-100">
+                            {trackedReport.victim.category}
+                          </span>
+                          {trackedReport.facts.violenceType.map((v, i) => (
+                            <span key={i} className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-slate-200">
+                              {v}
+                            </span>
+                          ))}
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">
+                          {trackedReport.facts.description}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex flex-col gap-4">
