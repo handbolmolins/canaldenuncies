@@ -200,6 +200,14 @@ const Dashboard: React.FC<DashboardProps> = ({ reports, onDeleteReport, onUpdate
                           <p>DNI: {selectedReport.informant.dni || 'N/A'}</p>
                         </div>
                       )}
+                      {selectedReport.requestMeeting && (
+                        <div className="mt-4 p-4 bg-amber-100 border-2 border-amber-200 rounded-2xl flex items-start gap-3 animate-pulse">
+                          <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                          <p className="text-xs font-black text-amber-900 leading-tight uppercase tracking-tight">
+                            L'informant ha sol·licitat una reunió presencial amb l’organització.
+                          </p>
+                        </div>
+                      )}
                     </div>
 
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest border-l-4 border-amber-500 pl-3 print:text-black print:border-black">Persona Denunciada</h4>
@@ -350,35 +358,37 @@ const Dashboard: React.FC<DashboardProps> = ({ reports, onDeleteReport, onUpdate
       )}
 
       {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && selectedReport && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md">
-          <div className="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl">
-            <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <AlertTriangle className="w-8 h-8" />
+      {
+        showDeleteConfirm && selectedReport && (
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md">
+            <div className="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <AlertTriangle className="w-8 h-8" />
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 mb-2">Confirmar Eliminació</h3>
+                <p className="text-slate-600">Estàs segur que vols eliminar definitivament l'expedient <span className="font-bold">#{selectedReport.id}</span>?</p>
+                <p className="text-sm text-red-600 mt-2">Aquesta acció no es pot desfer.</p>
               </div>
-              <h3 className="text-2xl font-black text-slate-900 mb-2">Confirmar Eliminació</h3>
-              <p className="text-slate-600">Estàs segur que vols eliminar definitivament l'expedient <span className="font-bold">#{selectedReport.id}</span>?</p>
-              <p className="text-sm text-red-600 mt-2">Aquesta acció no es pot desfer.</p>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 px-6 py-3 border-2 border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-colors"
-              >
-                Cancel·lar
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="flex-1 px-6 py-3 bg-red-600 text-white rounded-2xl font-bold hover:bg-red-700 transition-colors shadow-lg"
-              >
-                Eliminar
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 px-6 py-3 border-2 border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                >
+                  Cancel·lar
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 px-6 py-3 bg-red-600 text-white rounded-2xl font-bold hover:bg-red-700 transition-colors shadow-lg"
+                >
+                  Eliminar
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 };
 
