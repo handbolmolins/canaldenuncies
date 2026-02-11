@@ -364,6 +364,15 @@ const App: React.FC = () => {
               } else {
                 showToast("Error a l'actualitzar l'estat al servidor.", 'error');
               }
+            }} onUpdateObservations={async (id, observations) => {
+              const updated = reports.map(r => r.id === id ? { ...r, observations } : r);
+              const success = await sharedStorage.saveAll(updated);
+              if (success) {
+                setReports(updated);
+                showToast("Observacions actualitzades.", "success");
+              } else {
+                showToast("Error a l'actualitzar les observacions.", "error");
+              }
             }} />
           </div>
         )}
@@ -547,6 +556,15 @@ const App: React.FC = () => {
                         )}
                       </div>
                     </div>
+
+                    {trackedReport.observations && (
+                      <div className="pt-6 border-t border-slate-200 animate-in fade-in slide-in-from-top-2">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Resposta del Comitè</p>
+                        <div className="bg-white p-4 rounded-2xl border border-slate-100 text-sm md:text-base leading-relaxed text-slate-700 italic shadow-sm">
+                          "{trackedReport.observations}"
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex flex-col gap-4">

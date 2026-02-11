@@ -70,6 +70,7 @@ export interface Report {
   status: 'Pendent' | 'En Procés' | 'Resolt' | 'Urgència';
   gdprAccepted: boolean;
   requestMeeting: boolean;
+  observations?: string;
 }
 
 export interface Indicator {

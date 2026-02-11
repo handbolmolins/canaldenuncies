@@ -7,12 +7,15 @@ interface DashboardProps {
   reports: Report[];
   onDeleteReport: (id: string) => void;
   onUpdateStatus: (id: string, status: Report['status']) => void;
+  onUpdateObservations: (id: string, observations: string) => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ reports, onDeleteReport, onUpdateStatus }) => {
+const Dashboard: React.FC<DashboardProps> = ({ reports, onDeleteReport, onUpdateStatus, onUpdateObservations }) => {
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [editingObservations, setEditingObservations] = useState("");
+  const [isSavingObs, setIsSavingObs] = useState(false);
 
   const selectedReport = reports.find(r => r.id === selectedReportId) || null;
 
@@ -164,7 +167,7 @@ const Dashboard: React.FC<DashboardProps> = ({ reports, onDeleteReport, onUpdate
                     <p className="text-[10px] md:text-xs text-slate-500">{new Date(selectedReport.createdAt).toLocaleString()}</p>
                   </div>
                 </div>
-                <button onClick={() => setSelectedReportId(null)} className="p-2 hover:bg-slate-200 rounded-full">
+                <button onClick={() => { setSelectedReportId(null); setEditingObservations(""); }} className="p-2 hover:bg-slate-200 rounded-full">
                   <X className="w-5 h-5 md:w-6 md:h-6 text-slate-400" />
                 </button>
               </div>
@@ -262,6 +265,39 @@ const Dashboard: React.FC<DashboardProps> = ({ reports, onDeleteReport, onUpdate
                           ))}
                         </div>
                       </>
+                    )}
+
+                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest border-l-4 border-blue-500 pl-3 no-print">Observacions del Comitè (Públic)</h4>
+                    <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4 no-print">
+                      <textarea
+                        className="w-full p-4 rounded-2xl border bg-white min-h-[120px] text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Escriu observacions per al denunciant..."
+                        value={editingObservations}
+                        onChange={(e) => setEditingObservations(e.target.value)}
+                        onFocus={() => {
+                          if (editingObservations === "" && selectedReport.observations) {
+                            setEditingObservations(selectedReport.observations);
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={async () => {
+                          setIsSavingObs(true);
+                          await onUpdateObservations(selectedReport.id, editingObservations);
+                          setIsSavingObs(false);
+                        }}
+                        disabled={isSavingObs || editingObservations === selectedReport.observations}
+                        className="w-full bg-blue-50 text-blue-600 py-3 rounded-xl font-bold text-xs hover:bg-blue-100 transition-all disabled:opacity-50"
+                      >
+                        {isSavingObs ? 'Guardant...' : 'Guardar Observacions'}
+                      </button>
+                    </div>
+
+                    {selectedReport.observations && (
+                      <div className="hidden print:block space-y-2 mt-6">
+                        <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest border-l-4 border-blue-500 pl-3 print:text-black">Observacions del Comitè</h4>
+                        <p className="text-sm border p-4 rounded-xl">{selectedReport.observations}</p>
+                      </div>
                     )}
                   </div>
                 </div>
